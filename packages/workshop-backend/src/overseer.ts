@@ -4578,6 +4578,16 @@ class OverseerImpl implements AgentHooks {
   // Deliberately synchronous (the sharing manager is a parameter, not an internal await) so the
   // caller can check and latch in one synchronous block -- see authorizeObservation.
   #assertSensitiveObservationCoverage(gatekeeperId: number, sharing: SharingManager): void {
+    // Checked before the zero-collaborators early return below: removing the *last* collaborator
+    // is exactly when the list reads empty while their session lingers, un-disconnected until the
+    // revocation restart lands (see #revocationRestartPending). Throwing here also keeps a
+    // blocked observation from latching restricted mode (the latch runs after this gate).
+    if (this.#revocationRestartPending) {
+      throw new Error(
+          "This observation was blocked because it contains sensitive data and a collaborator's " +
+          "access to this workspace was just revoked; their sessions have not yet been " +
+          "disconnected.");
+    }
     let collaborators = sharing.listCollaborators();
     if (collaborators.length === 0) return;
 
@@ -5170,8 +5180,8 @@ class OverseerImpl implements AgentHooks {
   // handlers first await tearDownLostObservers (a serial removeObserver fan-out per lost
   // collaborator) and refreshAffectedCollaboratorListings (chunked cross-DO round trips), so the
   // window scales with collaborator and gatekeeper count. The removed users' sessions stay live
-  // and watching throughout; #revocationRestartPending is what keeps the exclusion gate failing
-  // closed across it.
+  // and watching throughout; #revocationRestartPending is what keeps the observation gates
+  // failing closed across it.
   async scheduleRevocationRestart(): Promise<void> {
     await this.ctx.storage.sync();
     await scheduler.wait(100);
@@ -8093,12 +8103,13 @@ class OverseerImpl implements AgentHooks {
   // Whether a sharing change that removed or downgraded someone has happened this DO session:
   // the revocation restart (scheduleRevocationRestart's abort) is coming, but it lands only
   // after the awaited teardown and listing-refresh phases below, so the affected users' live
-  // sessions keep watching the fan-out in the meantime -- while the exclusion gate reads them
-  // as already gone (a deleted record makes their observerId unknown to
-  // #decideExcludeObservers). The gate consults this flag to fail closed across that window.
-  // In-memory is the right scope, mirroring #pendingObserverIds: the abort destroys the flag
-  // with the DO, and it is deliberately never cleared -- if the restart is somehow lost, staying
-  // blocked is the safe direction (the next observation-free reconnect gets a fresh DO anyway).
+  // sessions keep watching the fan-out in the meantime -- while both observation gates read them
+  // as already gone (a deleted record makes their observerId unknown to #decideExcludeObservers,
+  // and removing the last collaborator empties the list #assertSensitiveObservationCoverage
+  // iterates). Both gates consult this flag to fail closed across that window. In-memory is the
+  // right scope, mirroring #pendingObserverIds: the abort destroys the flag with the DO, and it
+  // is deliberately never cleared -- if the restart is somehow lost, staying blocked is the safe
+  // direction (the next observation-free reconnect gets a fresh DO anyway).
   #revocationRestartPending = false;
 
   // Tear down observer records for collaborators who lost access as a result of a sharing change.

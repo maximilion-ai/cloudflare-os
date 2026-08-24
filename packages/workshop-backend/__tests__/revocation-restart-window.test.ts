@@ -3,16 +3,17 @@
 // tearDownLostObservers (serial removeObserver fan-out per collaborator) and
 // refreshAffectedCollaboratorListings (chunked cross-DO round trips) -- a window that scales with
 // collaborator and gatekeeper count, not the ~100ms the abort's own delay suggests. Inside that
-// window the removed user still watches the session fan-out, yet the exclusion gate reads them
-// as gone: #decideExcludeObservers admits an observation naming them (their record was already
-// deleted, so the id is unknown). It must instead fail closed until the restart lands, via the
-// in-memory #revocationRestartPending flag tearDownLostObservers sets synchronously with the
-// sever.
+// window the removed user still watches the session fan-out, yet both observation gates read
+// them as gone: #decideExcludeObservers admits an observation naming them (their record was
+// already deleted, so the id is unknown), and #assertSensitiveObservationCoverage's
+// zero-collaborators early return admits restricted data when the *last* collaborator was
+// removed. Both must instead fail closed until the restart lands, via the in-memory
+// #revocationRestartPending flag tearDownLostObservers sets synchronously with the sever.
 //
 // Runs against a real OverseerDurableObject (the TEST_OVERSEER binding, like
-// observer-serialization.test.ts); the gatekeeper facet is the fake, and the teardown's
-// removeObserver is parked on a deferred so the tests occupy the window deterministically. No
-// real DO abort ever fires here (scheduleRevocationRestart is not called).
+// verification-scope.test.ts); the gatekeeper facet is the fake, and the teardown's removeObserver
+// is parked on a deferred so the tests occupy the window deterministically. No real DO abort ever
+// fires here (scheduleRevocationRestart is not called).
 
 import { describe, expect, it } from "vitest";
 import { env } from "cloudflare:workers";
@@ -88,6 +89,9 @@ function severBob(impl: any): Promise<void> {
 
 const excludedObservation = (excludeObservers: string[]) =>
     ({ title: "Read a thing", description: "The test read a thing.", excludeObservers });
+const restrictedObservation =
+    { title: "Read a secret", description: "The test read a secret.",
+      containsRestrictedData: true };
 
 describe("observation gates during the revocation-restart window", () => {
   it("fails an excluded observation closed while the teardown is parked", async () => {
@@ -113,6 +117,27 @@ describe("observation gates during the revocation-restart window", () => {
     });
   });
 
+  it("fails a restricted observation closed without latching", async () => {
+    let stub = env.TEST_OVERSEER.getByName("revocation-window-restricted");
+    await runInDurableObject(stub, async (instance: OverseerDurableObject) => {
+      let { impl, releaseTeardown } = setup(instance);
+      let teardown = severBob(impl);
+      await tick();
+
+      // Bob was the *last* collaborator, so the coverage guard's zero-collaborators early return
+      // is exactly what pre-fix admitted the restricted read -- while bob still watched.
+      await expect(impl.authorizeObservation(1, restrictedObservation, { from: "user" }))
+          .rejects.toThrow(/just revoked/);
+      // A blocked observation delivers no data, so it must not have latched restricted mode.
+      expect(impl.storage.prohibitAllSharing.get()).toBeFalsy();
+
+      releaseTeardown();
+      await teardown;
+      await expect(impl.authorizeObservation(1, restrictedObservation, { from: "user" }))
+          .rejects.toThrow(/just revoked/);
+    });
+  });
+
   it("a no-op sharing change does not block observations", async () => {
     let stub = env.TEST_OVERSEER.getByName("revocation-window-noop");
     await runInDurableObject(stub, async (instance: OverseerDurableObject) => {
@@ -121,10 +146,7 @@ describe("observation gates during the revocation-restart window", () => {
       // so it must not block observations either -- same predicate as the restart's.
       await impl.tearDownLostObservers([]);
 
-      // The named id is unknown, so this is an ordinary admitted observation (naming obs-b would
-      // block for the wrong reason: bob stays authorized in this test's setup).
-      await expect(impl.authorizeObservation(
-          1, excludedObservation(["not-an-observer"]), { from: "user" }))
+      await expect(impl.authorizeObservation(1, restrictedObservation, { from: "user" }))
           .resolves.toBeUndefined();
     });
   });
