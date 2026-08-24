@@ -1,15 +1,15 @@
 // Runtime color theming.
 //
-// The base light/dark palettes are defined statically in styles.css via Tailwind `@theme` CSS
-// variables and `[data-mode="dark"]` overrides. Theme mode is applied on <html> so Kumo's semantic
-// tokens and native controls resolve consistently. We also let a deployment override the *accent*
-// family at runtime by setting those CSS variables on :root from an admin-chosen seed color.
+// The base light/dark palettes are defined as variables in garten-skin.css using `light-dark()`.
+// Theme mode is applied on <html> so Kumo's semantic tokens and native controls resolve
+// consistently. We also let a deployment override the *accent* family at runtime by setting those
+// CSS variables on :root from an admin-chosen seed color.
 // Hover/lighter/selection shades are derived from the seed with CSS relative-color syntax
 // (`oklch(from <seed> ...)`), so the admin only picks one color.
 //
 // Only the accent-related variables are overridden at runtime; backgrounds, lines, and neutral text
-// follow the light/dark palettes selected by `data-mode` in styles.css. The shared applicator
-// validates the seed before interpolating it into CSS values.
+// follow the light/dark palette selected by `color-scheme`. The shared applicator validates the
+// seed before interpolating it into CSS values.
 
 import { applyAccentColor as applyAccentColorToStyle } from '@gadgets/workshop-shared/theme'
 
@@ -67,4 +67,4 @@ export function applyAccentColor(color: string | null | undefined): void {
 }
 
 /** The base/default accent, shown in the admin picker when no custom color is set. */
-export const DEFAULT_ACCENT_COLOR = '#ff4801'
+export const DEFAULT_ACCENT_COLOR = '#346440'

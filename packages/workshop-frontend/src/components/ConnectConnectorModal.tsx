@@ -302,13 +302,7 @@ export default function ConnectConnectorModal({
           )}
 
           {!isManage && !autoProvisions && (
-            <div
-              className="relative mt-5 overflow-hidden rounded-lg border border-kumo-line px-4 py-3"
-              style={{
-                background:
-                  'linear-gradient(180deg, rgba(255, 72, 1, 0.04) 0%, rgba(255, 72, 1, 0.02) 100%)',
-              }}
-            >
+            <div className="relative mt-5 overflow-hidden rounded-lg border border-kumo-line bg-kumo-brand/[0.03] px-4 py-3">
               <div className="flex items-start gap-3">
                 <ShieldCheck
                   size={18}

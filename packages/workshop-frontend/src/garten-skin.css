@@ -1,0 +1,192 @@
+/*
+ * Garten skin for Cloudflare OS. New UI should use Kumo semantic utilities;
+ * this file translates them without changing upstream's Tailwind theme.
+ */
+html:root {
+  /* Garten design tokens */
+  --color-canvas: light-dark(hsl(75deg 14% 95%), oklch(0.17 0.004 120deg));
+  --color-surface: light-dark(hsl(75deg 30% 99%), oklch(0.21 0.005 120deg));
+  --color-surface-muted: light-dark(hsl(70deg 16% 93%), oklch(0.25 0.006 120deg));
+  --color-ink: light-dark(hsl(75deg 8% 9%), oklch(0.93 0.005 120deg));
+  --color-ink-muted: light-dark(hsl(75deg 4% 26%), oklch(0.76 0.008 120deg));
+  --color-ink-faint: light-dark(hsl(75deg 3% 41%), oklch(0.66 0.008 120deg));
+  --color-ink-inverse: hsl(75deg 10% 98%);
+  --color-scrim: light-dark(oklch(0.17 0.004 120deg / 40%), oklch(0.1 0.004 120deg / 55%));
+  --color-shadow: light-dark(oklch(0.17 0.004 120deg / 12%), oklch(0.1 0.004 120deg / 45%));
+  --color-line: light-dark(hsl(78deg 13% 85%), oklch(0.27 0.006 120deg));
+  --color-line-strong: light-dark(hsl(69deg 8% 65%), oklch(0.42 0.008 120deg));
+  --color-accent: light-dark(oklch(0.46 0.08 150deg), oklch(0.79 0.1 150deg));
+  --color-accent-strong: light-dark(oklch(0.38 0.08 150deg), oklch(0.86 0.1 150deg));
+  --color-accent-soft: light-dark(oklch(0.46 0.08 150deg / 10%), oklch(0.79 0.1 150deg / 14%));
+  --color-accent-fill: light-dark(oklch(0.46 0.08 150deg), oklch(0.46 0.09 150deg));
+  --color-accent-fill-hover: light-dark(oklch(0.38 0.08 150deg), oklch(0.38 0.09 150deg));
+  --color-agent: light-dark(oklch(0.55 0.07 300deg), oklch(0.72 0.07 300deg));
+  --color-agent-soft: light-dark(oklch(0.55 0.07 300deg / 10%), oklch(0.72 0.07 300deg / 14%));
+  --color-info: light-dark(oklch(0.52 0.09 250deg), oklch(0.74 0.09 250deg));
+  --color-info-soft: light-dark(oklch(0.52 0.09 250deg / 10%), oklch(0.74 0.09 250deg / 14%));
+  --color-danger: light-dark(oklch(0.55 0.22 27deg), oklch(0.72 0.18 25deg));
+  --color-danger-fill: light-dark(oklch(0.55 0.22 27deg), oklch(0.48 0.18 25deg));
+  --color-danger-soft: light-dark(oklch(0.55 0.22 27deg / 9%), oklch(0.72 0.18 25deg / 14%));
+  --color-warn: light-dark(oklch(0.55 0.135 66deg), oklch(0.8 0.13 75deg));
+  --color-warn-fill: light-dark(oklch(0.55 0.135 66deg), oklch(0.48 0.13 75deg));
+  --color-warn-soft: light-dark(oklch(0.55 0.135 66deg / 11%), oklch(0.8 0.13 75deg / 14%));
+  --color-ok: light-dark(oklch(0.55 0.15 150deg), oklch(0.78 0.15 150deg));
+  --color-ok-fill: light-dark(oklch(0.52 0.15 150deg), oklch(0.48 0.13 150deg));
+  --color-ok-text: light-dark(oklch(0.44 0.14 150deg), oklch(0.82 0.15 150deg));
+  --color-ok-soft: light-dark(oklch(0.55 0.15 150deg / 10%), oklch(0.78 0.15 150deg / 14%));
+
+  --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --font-sans:
+    "Hanken Grotesk Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue",
+    helvetica, arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-mono:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Kumo semantic translation */
+  --color-kumo-canvas: var(--color-canvas);
+  --color-kumo-base: var(--color-canvas);
+  --color-kumo-elevated: var(--color-surface);
+  --color-kumo-tint: var(--color-surface-muted);
+  --color-kumo-overlay: var(--color-surface);
+  --color-kumo-recessed: color-mix(in srgb, var(--color-ink) 8%, var(--color-canvas));
+  --color-kumo-control: var(--color-surface);
+  --color-kumo-contrast: var(--color-kumo-brand);
+  --color-kumo-strong: var(--color-kumo-brand-hover);
+  --color-kumo-fill: var(--color-surface-muted);
+  --color-kumo-fill-hover: color-mix(in srgb, var(--color-ink) 6%, var(--color-surface-muted));
+  --color-kumo-interact: var(--color-line-strong);
+  --color-kumo-brand: var(--color-accent-fill);
+  --color-kumo-brand-hover: var(--color-accent-fill-hover);
+  --color-kumo-line: var(--color-line);
+  --color-kumo-hairline: var(--color-line);
+  --color-kumo-ring: var(--text-color-kumo-brand);
+  --color-kumo-focus: var(--text-color-kumo-brand);
+  --color-kumo-bubble-user: var(--color-surface-muted);
+  --color-kumo-shadow-edge: var(--color-line);
+  --color-kumo-shadow-drop: var(--color-shadow);
+  --color-kumo-tip-shadow: var(--color-shadow);
+  --color-kumo-tip-stroke: var(--color-line);
+  --color-kumo-info: var(--color-info);
+  --color-kumo-info-tint: var(--color-info-soft);
+  --color-kumo-warning: var(--color-warn-fill);
+  --color-kumo-warning-tint: var(--color-warn-soft);
+  --color-kumo-danger: var(--color-danger-fill);
+  --color-kumo-danger-tint: var(--color-danger-soft);
+  --color-kumo-success: var(--color-ok-fill);
+  --color-kumo-success-tint: var(--color-ok-soft);
+  --color-kumo-banner-warning: var(--color-warn-soft);
+
+  --text-color-kumo-default: var(--color-ink);
+  --text-color-kumo-default-hover: var(--color-ink);
+  --text-color-kumo-inverse: var(--color-ink-inverse);
+  --text-color-kumo-strong: var(--color-ink);
+  --text-color-kumo-subtle: var(--color-ink-muted);
+  --text-color-kumo-inactive: var(--color-ink-faint);
+  --text-color-kumo-placeholder: var(--color-ink-faint);
+  --text-color-kumo-brand: var(--color-accent);
+  --text-color-kumo-link: var(--color-accent);
+  --text-color-kumo-success: var(--color-ok-text);
+  --text-color-kumo-danger: var(--color-danger);
+  --text-color-kumo-warning: var(--color-warn);
+
+  /* Existing app aliases */
+  --color-accent-100: var(--color-accent-fill);
+  --color-accent-200: var(--color-accent-strong);
+  --color-background-100: var(--color-canvas);
+  --color-background-200: var(--color-surface);
+  --color-background-300: var(--color-surface-muted);
+  --color-foreground-100: var(--color-ink);
+  --color-foreground-200: var(--color-ink-muted);
+  --color-foreground-300: var(--color-ink-faint);
+  --color-border-100: var(--color-line);
+  --color-border-100-50: color-mix(in srgb, var(--color-line) 50%, transparent);
+  --color-selection-bg: var(--color-accent-soft);
+  --color-selection-text: var(--color-accent-strong);
+  --color-compute-100: var(--color-info);
+  --color-compute-200: var(--color-info-soft);
+  --color-storage-100: light-dark(oklch(0.52 0.09 325deg), oklch(0.76 0.09 325deg));
+  --color-storage-200: light-dark(oklch(0.52 0.09 325deg / 10%), oklch(0.76 0.09 325deg / 14%));
+  --color-ai-100: var(--color-agent);
+  --color-ai-200: var(--color-agent-soft);
+  --color-media-100: light-dark(oklch(0.52 0.09 35deg), oklch(0.76 0.09 35deg));
+  --color-media-200: light-dark(oklch(0.52 0.09 35deg / 10%), oklch(0.76 0.09 35deg / 14%));
+  --color-status-live: var(--color-ok-text);
+  --color-status-draft: var(--color-warn);
+  --color-status-building: var(--color-info);
+
+  --radius-control: 0.375rem;
+  --radius-panel: 0.625rem;
+  --radius-md: var(--radius-control);
+  --radius-lg: var(--radius-control);
+  --radius-xl: var(--radius-panel);
+  --radius-2xl: var(--radius-panel);
+  --duration-fast: 120ms;
+  --duration-slow: 240ms;
+  --duration-nav: 150ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-strong: var(--ease-out);
+  --default-transition-duration: 120ms;
+  --default-transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-floating: 0 8px 24px var(--color-shadow);
+  --shadow-stack: 0 1px 3px var(--color-shadow);
+}
+
+@layer base {
+  h1 {
+    font-family: var(--font-display);
+  }
+}
+
+.template-card:hover,
+.themed-floating-shadow,
+[data-mode="dark"] .themed-floating-shadow,
+.themed-floating-shadow-lg,
+[data-mode="dark"] .themed-floating-shadow-lg {
+  box-shadow: var(--shadow-floating);
+}
+
+.themed-prompt-card-shadow,
+[data-mode="dark"] .themed-prompt-card-shadow,
+.themed-prompt-card-shadow:focus-within,
+[data-mode="dark"] .themed-prompt-card-shadow:focus-within {
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--color-line-strong) 35%, transparent),
+    var(--shadow-floating);
+}
+
+.themed-user-bubble-shadow,
+[data-mode="dark"] .themed-user-bubble-shadow {
+  box-shadow:
+    0 1px 1px color-mix(in srgb, var(--color-shadow) 20%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-line-strong) 35%, transparent);
+}
+
+.themed-thumbnail-shadow,
+[data-mode="dark"] .themed-thumbnail-shadow {
+  box-shadow: 0 2px 14px var(--color-shadow);
+}
+
+.themed-bottom-shadow,
+[data-mode="dark"] .themed-bottom-shadow {
+  box-shadow: 0 4px 10px -8px var(--color-shadow);
+}
+
+.themed-compact-shadow,
+[data-mode="dark"] .themed-compact-shadow {
+  box-shadow: 0 8px 24px -20px var(--color-shadow);
+}
+
+.themed-compact-shadow:focus-within,
+[data-mode="dark"] .themed-compact-shadow:focus-within {
+  box-shadow: 0 10px 28px -20px var(--color-shadow);
+}
+
+.themed-card-hover-shadow:hover,
+[data-mode="dark"] .themed-card-hover-shadow:hover {
+  box-shadow: 0 8px 20px -16px var(--color-shadow);
+}
+
+.themed-row-hover-shadow:hover,
+[data-mode="dark"] .themed-row-hover-shadow:hover {
+  box-shadow: 0 8px 20px -18px var(--color-shadow);
+}
