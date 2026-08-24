@@ -69,6 +69,43 @@ describe("mapConcurrent", () => {
       });
   });
 
+  it("stops claiming items on abort, awaits the tasks in flight, rejects with the reason", async () => {
+    const controller = new AbortController();
+    const sentinel = new Error("doomed elsewhere");
+    const gates = [deferred<string>(), deferred<string>()];
+    const started: number[] = [];
+    let finished = 0;
+    const all = mapConcurrent([0, 1, 2, 3], 2, async i => {
+      started.push(i);
+      const value = await gates[i].promise;
+      finished++;
+      return value;
+    }, controller.signal);
+    controller.abort(sentinel);
+    gates[0].resolve("a");
+    gates[1].resolve("b");
+    await assert.rejects(all, (error: unknown) => error === sentinel);
+    assert.deepEqual(started, [0, 1]);
+    assert.equal(finished, 2);
+  });
+
+  it("reports a task's own failure rather than the abort reason", async () => {
+    const controller = new AbortController();
+    const boom = new Error("boom");
+    const gate = deferred<number>();
+    const all = mapConcurrent([0, 1, 2], 2, async i => {
+      // Item 0 fails and aborts, the way build-release's failFast wrapper does; item 1 is already
+      // in flight and completes afterwards; item 2 is never claimed.
+      if (i === 0) {
+        controller.abort(new Error("abort reason, not the failure"));
+        throw boom;
+      }
+      return gate.promise;
+    }, controller.signal);
+    gate.resolve(1);
+    await assert.rejects(all, (error: unknown) => error === boom);
+  });
+
   it("accepts an empty list", async () => {
     assert.deepEqual(await mapConcurrent([], 4, async () => 1), []);
   });
