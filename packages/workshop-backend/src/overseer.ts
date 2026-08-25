@@ -745,11 +745,11 @@ type ExternalMessageRecord = {
 } & (
   | {
       status: "waiting";
-      chatGatewayRpcTarget: NativeRpcStub<ChatGatewayRpcTarget>;
+      chatGatewayRpcTarget: ChatGatewayRpcTarget;
     }
   | {
       status: "ready";
-      chatGatewayRpcTarget: NativeRpcStub<ChatGatewayRpcTarget>;
+      chatGatewayRpcTarget: ChatGatewayRpcTarget;
       responseText: string;
     }
   | {
@@ -760,7 +760,7 @@ type ExternalMessageRecord = {
 
 type ExternalMessageResponseTargetRegistration = {
   idempotencyKey: string;
-  chatGatewayRpcTarget: NativeRpcStub<ChatGatewayRpcTarget>;
+  chatGatewayRpcTarget: ChatGatewayRpcTarget;
 };
 
 type ExternalMessageResponseTargetRegistrationDecision =
@@ -777,9 +777,16 @@ type ExternalMessageSubmitInput = {
   externalChatKey: string;
   idempotencyKey: string;
   prompt: string;
-  chatGatewayRpcTarget: NativeRpcStub<ChatGatewayRpcTarget>;
-  title: string;
-};
+  chatGatewayRpcTarget: ChatGatewayRpcTarget;
+} & (
+  | {
+      existingOnly: true;
+    }
+  | {
+      existingOnly?: false;
+      title: string;
+    }
+);
 
 type ExternalChatRecord = {
   externalChatKey: string;
@@ -1592,9 +1599,6 @@ class OverseerImpl implements AgentHooks {
 
   #deleteExternalMessageResponseDeliveryRecord(record: ExternalMessageRecord): void {
     this.storage.gadgetResponseDeliveries.delete(record.idempotencyKey);
-    if (record.status !== "delivered") {
-      record.chatGatewayRpcTarget[Symbol.dispose]();
-    }
   }
 
   #sweepDeliveredExternalMessageResponses(): void {
@@ -5321,25 +5325,19 @@ class OverseerImpl implements AgentHooks {
     idempotencyKey: string,
     chatId: number,
     promptSequence: number,
-    chatGatewayRpcTarget: NativeRpcStub<ChatGatewayRpcTarget>,
+    chatGatewayRpcTarget: ChatGatewayRpcTarget,
   ): void {
     if (this.storage.gadgetResponseDeliveries.undeliveredByChatId.get(chatId)) {
       throw new Error("This chat already has an undelivered workspace response target.");
     }
-    chatGatewayRpcTarget = chatGatewayRpcTarget.dup();
-    try {
-      this.storage.gadgetResponseDeliveries.put({
-        idempotencyKey,
-        chatId,
-        promptSequence,
-        chatGatewayRpcTarget,
-        createdAt: Date.now(),
-        status: "waiting",
-      });
-    } catch (err) {
-      chatGatewayRpcTarget[Symbol.dispose]();
-      throw err;
-    }
+    this.storage.gadgetResponseDeliveries.put({
+      idempotencyKey,
+      chatId,
+      promptSequence,
+      chatGatewayRpcTarget,
+      createdAt: Date.now(),
+      status: "waiting",
+    });
   }
 
   #prepareExternalMessageResponseTargetRegistration(
@@ -5426,7 +5424,6 @@ class OverseerImpl implements AgentHooks {
       createdAt: record.createdAt,
       deliveredAt: Date.now(),
     });
-    record.chatGatewayRpcTarget[Symbol.dispose]();
   }
 
   async deliverReadyExternalMessageResponses(): Promise<void> {
@@ -8334,6 +8331,9 @@ export class OverseerDurableObject extends DurableObject<Cloudflare.Env> {
     // Create the Gadget if it doesn't exist yet.
     let ownerId = this.impl.ownerId;
     if (!ownerId) {
+      if (input.existingOnly) {
+        return { accepted: false, message: "Workspace not found." };
+      }
       this.impl.ownerId = callerId;
       this.impl.ownerProfileId = callerProfile.id;
       this.impl.storage.ownerId.put(callerId);

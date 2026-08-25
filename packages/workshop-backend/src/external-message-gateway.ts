@@ -2,6 +2,7 @@ import { WorkerEntrypoint } from "cloudflare:workers";
 import { validateRpc } from "capnweb-validate";
 import {
   type ExternalMessageGateway as ExternalMessageGatewayContract,
+  type SubmitExistingWorkspaceMessageInput,
   type SubmitExternalMessageInput,
   type SubmitExternalMessageResult,
 } from "@gadgets/workshop-shared/external-message-gateway";
@@ -34,6 +35,30 @@ export class ExternalMessageGateway extends WorkerEntrypoint<Cloudflare.Env, Ext
       prompt: input.prompt,
       chatGatewayRpcTarget: input.chatGatewayRpcTarget,
       title: input.gadgetTitle,
+    });
+  }
+
+  async submitExistingWorkspaceMessage(
+    input: SubmitExistingWorkspaceMessageInput,
+  ): Promise<SubmitExternalMessageResult> {
+    let source = this.ctx.props.source;
+    if (!source) throw new Error("ExternalMessageGateway source prop is required.");
+
+    let overseers = this.ctx.exports.OverseerDurableObject;
+    let overseer;
+    try {
+      overseer = overseers.get(overseers.idFromString(input.workspaceId));
+    } catch {
+      return { accepted: false, message: "Workspace not found." };
+    }
+
+    return await overseer.receiveExternalMessage({
+      callerEmail: input.callerEmail,
+      externalChatKey: `${source}:${input.chatKey}`,
+      idempotencyKey: `${source}:${input.messageKey}`,
+      prompt: input.prompt,
+      chatGatewayRpcTarget: input.chatGatewayRpcTarget,
+      existingOnly: true,
     });
   }
 }
