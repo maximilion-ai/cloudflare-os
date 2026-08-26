@@ -54,6 +54,7 @@ import {
   validateChatAttachmentUpload,
 } from "./chat-attachment-validation";
 import { renderGadgetInBrowser } from "./browser-export";
+import { bundleGadgetClient } from "./gadget-client-bundle";
 import {
   defaultExportFormats,
   exportServerFormat,
@@ -4073,10 +4074,9 @@ class OverseerImpl implements AgentHooks {
   }
 
   async getGadgetUiBundle(gadgetId: WorkpieceId, chatId?: number): Promise<UiBundle | null> {
-    // TODO: Bundle the UI? For now we just return client.js.
     this.checkChatExistsAndMaterializeChanges(chatId);
-    let jsCode = (await this.readGadgetFiles(gadgetId, chatId)).get("client.js");
-    return jsCode !== undefined ? {jsCode} : null;
+    let files = await this.readGadgetFiles(gadgetId, chatId);
+    return files.has("client.js") ? {jsCode: bundleGadgetClient(files)} : null;
   }
 
   async getGadgetExportFormats(gadgetId: WorkpieceId, chatId?: number)

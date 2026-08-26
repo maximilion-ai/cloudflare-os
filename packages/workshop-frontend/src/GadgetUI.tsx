@@ -22,8 +22,26 @@ let CAPNWEB_BUNDLE_ANNOTATED = `//# sourceURL=jsrpc.js\n${CAPNWEB_BUNDLE}`
 //
 // In any case, we'll prefix the gadget code with this prefix which imports the Cap'n Web library
 // (from a massive data URL) and sets up the RPC connection to the parent.
-let INJECTED_CODE_PREFIX = encodeURIComponent(String.raw`//# sourceURL=client.js
+let INJECTED_CODE = String.raw`//# sourceURL=client.js
 import { RpcTarget, RpcStub, newMessagePortRpcSession } from "data:text/javascript;charset=utf-8;base64,${btoa(CAPNWEB_BUNDLE_ANNOTATED)}";
+
+// Native btoa accepts binary strings only. Gadget builders commonly inflate UTF-8 source before
+// importing it, so preserve the binary fast path and encode Unicode source when needed.
+{
+  const nativeBtoa = globalThis.btoa;
+  globalThis.btoa = value => {
+    try {
+      return nativeBtoa(value);
+    } catch {
+      const bytes = new TextEncoder().encode(String(value));
+      let binary = '';
+      for (let offset = 0; offset < bytes.length; offset += 32768) {
+        binary += String.fromCharCode(...bytes.subarray(offset, offset + 32768));
+      }
+      return nativeBtoa(binary);
+    }
+  };
+}
 
 let gadget;  // RPC stub to the gadget's server-side Durable Object.
 {
@@ -100,17 +118,39 @@ window.addEventListener('unhandledrejection', (event) => {
   }, '*');
 });
 
-`);
+const clientCode = await new Promise(resolve => {
+  const receive = event => {
+    if (event.source !== window.parent || event.data?.type !== 'gadget-code') return;
+    window.removeEventListener('message', receive);
+    resolve(event.data.code);
+  };
+  window.addEventListener('message', receive);
+  window.parent.postMessage({ type: 'gadget-code-ready' }, '*');
+});
+const clientUrl = URL.createObjectURL(new Blob([
+  'const { gadget, RpcTarget, RpcStub } = globalThis.__workshopGadgetRuntime;\n' + clientCode,
+], { type: 'text/javascript' }));
+globalThis.__workshopGadgetRuntime = { gadget, RpcTarget, RpcStub };
+globalThis.gadget = gadget;
+globalThis.RpcTarget = RpcTarget;
+globalThis.RpcStub = RpcStub;
+try {
+  await import(clientUrl);
+} finally {
+  URL.revokeObjectURL(clientUrl);
+  delete globalThis.__workshopGadgetRuntime;
+}
+`;
 
-const createSandboxedHtml = (jsCode: string): string => {
+const createSandboxedHtml = (): string => {
   return `<!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; frame-src 'none'; script-src data: 'unsafe-inline'; style-src data: 'unsafe-inline'; img-src data:; media-src data:; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'none';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; frame-src 'none'; script-src data: blob: 'unsafe-inline'; style-src data: 'unsafe-inline'; img-src data:; media-src data:; object-src 'none'; base-uri 'none'; form-action 'none'; connect-src 'none';">
 </head>
 <body>
-    <script type="module" src="data:text/javascript;charset=utf-8,${INJECTED_CODE_PREFIX}${encodeURIComponent(jsCode)}"></script>
+    <script type="module">${INJECTED_CODE}</script>
 </body>
 </html>`.trim()
 }
@@ -144,6 +184,7 @@ function GadgetUISession({ gadget, height, reloadTrigger, isVisible = true, chat
   const [isInvalidated, setIsInvalidated] = useState(false)
   const [iframeGeneration, setIframeGeneration] = useState(0)
   const iframeRef = useRef<HTMLIFrameElement>(null)
+  const bundleCodeRef = useRef<string | null>(null)
   const prevReloadTriggerRef = useRef(reloadTrigger)
   // Identifies the newest bundle load, so an older one can't write state after being superseded.
   const loadGenerationRef = useRef(0)
@@ -294,9 +335,10 @@ function GadgetUISession({ gadget, height, reloadTrigger, isVisible = true, chat
         const bundle = await gadget.getUiBundle(chatId)
         if (!isCurrent()) return
         if (bundle) {
-          const html = createSandboxedHtml(bundle.jsCode)
-          setSandboxedHtml(html)
+          bundleCodeRef.current = bundle.jsCode
+          setSandboxedHtml(createSandboxedHtml())
         } else {
+          bundleCodeRef.current = null
           setSandboxedHtml(null)
         }
         setHasLoaded(true)
@@ -383,6 +425,11 @@ function GadgetUISession({ gadget, height, reloadTrigger, isVisible = true, chat
           level: event.data.level,
           message: event.data.message,
         })
+      } else if (event.data?.type === 'gadget-code-ready') {
+        const code = bundleCodeRef.current
+        if (code !== null) {
+          iframeRef.current?.contentWindow?.postMessage({ type: 'gadget-code', code }, '*')
+        }
       } else if (event.data?.type === 'escape') {
         onIframeEscapeRef.current?.()
       }

@@ -150,6 +150,16 @@ function dispatchIframeHandshake(iframe: HTMLIFrameElement, port: MessagePort) {
   }))
 }
 
+function requestBundleCode(iframe: HTMLIFrameElement) {
+  const postMessage = vi.spyOn(iframe.contentWindow!, 'postMessage').mockImplementation(() => {})
+  window.dispatchEvent(new MessageEvent('message', {
+    data: { type: 'gadget-code-ready' },
+    origin: 'null',
+    source: iframe.contentWindow,
+  }))
+  return postMessage
+}
+
 describe('GadgetUI RPC recovery', () => {
   let container: HTMLDivElement
   let root: Root
@@ -185,6 +195,12 @@ describe('GadgetUI RPC recovery', () => {
     await vi.waitFor(() => expect(container.querySelector('iframe')).not.toBeNull())
     expect(container.querySelector('iframe')!.srcdoc).toContain(
       '<meta name="viewport" content="width=device-width, initial-scale=1">',
+    )
+    expect(container.querySelector('iframe')!.srcdoc).toContain('globalThis.RpcTarget = RpcTarget')
+    expect(container.querySelector('iframe')!.srcdoc).not.toContain('responsive')
+    expect(requestBundleCode(container.querySelector('iframe')!)).toHaveBeenCalledWith(
+      { type: 'gadget-code', code: 'document.body.textContent = "responsive"' },
+      '*',
     )
   })
 
@@ -385,16 +401,18 @@ describe('GadgetUI RPC recovery', () => {
     await act(async () => {
       root.render(<GadgetUI gadget={replacement.stub} height="100px" />)
     })
-    await vi.waitFor(() => {
-      expect(container.querySelector('iframe')?.srcdoc).toContain('replacement')
-    })
+    await vi.waitFor(() => expect(container.querySelector('iframe')).not.toBeNull())
+    const iframe = container.querySelector('iframe')!
+    expect(requestBundleCode(iframe)).toHaveBeenCalledWith(
+      { type: 'gadget-code', code: 'document.body.textContent = "replacement"' },
+      '*',
+    )
 
     await act(async () => {
       oldBundle.resolve({ jsCode: 'document.body.textContent = "stale"' })
       await oldBundle.promise
     })
 
-    expect(container.querySelector('iframe')?.srcdoc).toContain('replacement')
     expect(container.querySelector('iframe')?.srcdoc).not.toContain('stale')
   })
 
@@ -423,10 +441,12 @@ describe('GadgetUI RPC recovery', () => {
     await act(async () => {
       root.render(<GadgetUI gadget={replacement.stub} height="100px" isVisible />)
     })
-    await vi.waitFor(() => {
-      expect(replacement.getUiBundle).toHaveBeenCalledOnce()
-      expect(container.querySelector('iframe')?.srcdoc).toContain('replacement')
-    })
+    await vi.waitFor(() => expect(replacement.getUiBundle).toHaveBeenCalledOnce())
+    const iframe = container.querySelector('iframe')!
+    expect(requestBundleCode(iframe)).toHaveBeenCalledWith(
+      { type: 'gadget-code', code: 'document.body.textContent = "replacement"' },
+      '*',
+    )
     expect(container.querySelector('iframe')?.srcdoc).not.toContain('stale')
   })
 

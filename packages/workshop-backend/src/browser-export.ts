@@ -134,6 +134,24 @@ function makeExportHtml(clientCode: string, formatId: string): string {
   let clientPrefix = String.raw`//# sourceURL=client.js
 const { gadget, RpcStub, RpcTarget } = globalThis.__workshopExportRuntime;
 delete globalThis.__workshopExportRuntime;
+globalThis.gadget = gadget;
+globalThis.RpcStub = RpcStub;
+globalThis.RpcTarget = RpcTarget;
+{
+  const nativeBtoa = globalThis.btoa;
+  globalThis.btoa = value => {
+    try {
+      return nativeBtoa(value);
+    } catch {
+      const bytes = new TextEncoder().encode(String(value));
+      let binary = "";
+      for (let offset = 0; offset < bytes.length; offset += 32768) {
+        binary += String.fromCharCode(...bytes.subarray(offset, offset + 32768));
+      }
+      return nativeBtoa(binary);
+    }
+  };
+}
 `;
   let clientUrl = scriptUrl(clientPrefix + clientCode);
   let runtimeUrl = scriptUrl(

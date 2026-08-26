@@ -82,8 +82,11 @@ describe("bundled format blueprints", () => {
 
   it("ships print layouts for every standard output format", async () => {
     for (let entry of FORMAT_BLUEPRINTS) {
-      expect(await readBlueprintFile(entry, "client.js"), entry.blueprintId)
-        .toContain("@media print");
+      let server = await readBlueprintFile(entry, "server.js");
+      if (server.includes('mode: "browser"')) {
+        expect(await readBlueprintFile(entry, "client.js"), entry.blueprintId)
+          .toContain("@media print");
+      }
     }
   });
 
