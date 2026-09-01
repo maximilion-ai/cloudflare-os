@@ -74,9 +74,15 @@ async function finishOnboarding() {
 async function createSpace() {
   await page.goto(`${BASE}/outputs`, { waitUntil: 'networkidle' })
   const entry = page.getByText(NEW_ITEM, { exact: true }).first()
-  await entry.waitFor({ timeout: 15000 }).catch(() => {})
-  if (!(await entry.count())) return console.log(`no "${NEW_ITEM}" entry on the Library page`)
-  await entry.click()
+  await entry.waitFor({ timeout: 8000 }).catch(() => {})
+  if (await entry.count()) {
+    await entry.click()
+  } else {
+    await page.getByRole('button', { name: 'Search' }).first().click()
+    await page.keyboard.type(NEW_ITEM)
+    await page.waitForTimeout(500)
+    await page.keyboard.press('Enter')
+  }
   await page.waitForURL(/\/workspace\//, { timeout: 30000 })
   await page.waitForLoadState('networkidle')
   await page.waitForTimeout(2500)

@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Clock, MagnifyingGlass, Hexagon, DotsThreeVertical, ShareNetwork, Trash, Info, Star, Pencil, ArrowRight } from '@phosphor-icons/react'
+import { Clock, MagnifyingGlass, Shapes, DotsThreeVertical, ShareNetwork, Trash, Info, Star, Pencil, ArrowRight } from '@phosphor-icons/react'
 import { useState, useEffect, useRef } from 'react'
 import { DropdownMenu, Dialog, Button, useKumoToastManager } from '@cloudflare/kumo'
 import { RpcStub } from 'capnweb'
@@ -507,7 +507,7 @@ function HomeFeaturedBlueprintCard({
         />
         <div className="flex min-w-0 items-start gap-2 px-1 pb-1">
           <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br ${getBlueprintGradient(blueprint.id)}`}>
-            <Hexagon size={13} className="text-white/75" weight="bold" />
+            <Shapes size={13} className="text-white/80" weight="bold" />
           </div>
           <div className="min-w-0 flex-1">
             <p className="m-0 truncate text-[13px] leading-[18px] font-semibold tracking-[-0.25px] text-kumo-default">

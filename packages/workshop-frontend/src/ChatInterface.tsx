@@ -3423,7 +3423,7 @@ export const ChatInput = ({
                   : isAgentActive
                     ? "Waiting for agent…"
                     : newChat
-                      ? "Start a new conversation…"
+                      ? "Ask for anything…"
                       : "Ask a follow-up…"
               }
               autoFocus={autoFocus}

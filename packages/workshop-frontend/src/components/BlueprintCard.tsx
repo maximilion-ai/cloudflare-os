@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import {
-  Hexagon,
+  Shapes,
   Robot,
   Lightning,
   Star,
@@ -11,15 +11,14 @@ import {
 } from "@gadgets/workshop-shared/api";
 import { VendorDescription } from "@gadgets/workshop-shared/gatekeeper";
 
+// Garten tints only: moss, olive, the agent violet, the info blue, a warm clay and a cool slate.
 const gradients = [
-  "from-[#4A154B] to-[#7C3085]",
-  "from-[#0052CC] to-[#2684FF]",
-  "from-[#5865F2] to-[#7983F5]",
-  "from-[#34A853] to-[#4285F4]",
-  "from-[#24292e] to-[#555]",
-  "from-[#E01E5A] to-[#ECB22E]",
-  "from-orange-600 to-red-600",
-  "from-emerald-600 to-teal-600",
+  "from-[oklch(0.46_0.08_150deg)] to-[oklch(0.6_0.1_150deg)]",
+  "from-[oklch(0.5_0.07_120deg)] to-[oklch(0.66_0.09_110deg)]",
+  "from-[oklch(0.5_0.07_300deg)] to-[oklch(0.66_0.08_300deg)]",
+  "from-[oklch(0.5_0.09_250deg)] to-[oklch(0.66_0.1_240deg)]",
+  "from-[oklch(0.52_0.09_35deg)] to-[oklch(0.68_0.1_50deg)]",
+  "from-[oklch(0.48_0.04_220deg)] to-[oklch(0.62_0.05_210deg)]",
 ];
 
 export function getGradient(id: string) {
@@ -137,7 +136,7 @@ export function BlueprintCard({
           <div
             className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br ${getGradient(id)}`}
           >
-            <Hexagon size={16} className="text-white/75" weight="bold" />
+            <Shapes size={16} className="text-white/80" weight="bold" />
           </div>
           <div className="min-w-0 flex-1">
             <p className="m-0 line-clamp-2 text-[15px] leading-5 font-medium tracking-[-0.25px] text-kumo-default">

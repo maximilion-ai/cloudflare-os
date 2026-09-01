@@ -6,7 +6,6 @@ import {
   Pencil,
   Check,
   X,
-  Hexagon,
   Blueprint,
   Trash,
   ArrowsOutSimple,
@@ -65,6 +64,7 @@ import { reportIssue } from './errorReporting'
 import GadgetExportMenu from './GadgetExportMenu'
 import { MENU_CONTENT, MENU_ITEM, MENU_ITEM_DANGER, MENU_POSITIONER_STYLE } from './components/menuStyles'
 import { isImeComposing } from './keyboardEvent'
+import GartenMark from './components/GartenMark'
 
 const NO_GADGETS: ReadonlySet<WorkpieceId> = new Set()
 
@@ -1299,7 +1299,7 @@ export default function GadgetEditor() {
   }
 
   // ── shared height tokens ──────────────────────────────────────────────────────
-  const TOPBAR_H = 56   // h-14 (matches home page Header)
+  const TOPBAR_H = 48   // the 48px band every Garten column shares
   const TABBAR_H = 48   // h-12
 
   // ── error / loading states ────────────────────────────────────────────────────
@@ -1395,7 +1395,7 @@ export default function GadgetEditor() {
             className="flex-shrink-0 hover:opacity-80 transition-opacity"
           >
             <SiteLogo size={22}>
-              <Hexagon size={22} className="text-kumo-brand" weight="bold" />
+              <GartenMark size={22} />
             </SiteLogo>
           </Link>
 

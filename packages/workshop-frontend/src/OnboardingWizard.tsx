@@ -564,7 +564,7 @@ export default function OnboardingWizard({
                   Connect your services
                 </h2>
                 <p className="text-sm text-kumo-subtle mb-6">
-                  Link your accounts so your gadgets can access them. You can always add more later.
+                  Link the accounts your apps may use. You can always add more later.
                 </p>
 
                 {vendorsLoading ? (

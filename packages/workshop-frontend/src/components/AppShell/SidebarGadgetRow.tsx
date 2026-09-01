@@ -98,7 +98,7 @@ export default function SidebarGadgetRow({
                 render={
                   <button
                     type="button"
-                    aria-label="Workspace actions"
+                    aria-label="Space actions"
                     className="flex h-6 w-6 items-center justify-center rounded-md text-kumo-subtle opacity-0 transition-[opacity,color,background-color] group-hover:opacity-100 hover:bg-kumo-fill hover:text-kumo-default focus:opacity-100"
                   >
                     <DotsThree size={14} weight="bold" />

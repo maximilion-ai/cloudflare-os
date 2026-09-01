@@ -3,22 +3,9 @@ import { Clock, ArrowRight } from '@phosphor-icons/react'
 import { useAuthenticatedApi } from '../AuthContext'
 import { useState, useEffect } from 'react'
 import { GadgetMetadataWithTimestamps } from '@gadgets/workshop-shared/api'
+import { getGradient } from './BlueprintCard'
 
 // A simple deterministic gradient based on the gadget ID
-function getGradient(id: string): string {
-  const gradients = [
-    'from-[#4A154B] to-[#7C3085]',
-    'from-[#0052CC] to-[#2684FF]',
-    'from-[#5865F2] to-[#7983F5]',
-    'from-[#34A853] to-[#4285F4]',
-    'from-[#24292e] to-[#555]',
-    'from-[#E01E5A] to-[#ECB22E]',
-    'from-orange-600 to-red-600',
-    'from-emerald-600 to-teal-600',
-  ]
-  const idx = id.charCodeAt(0) % gradients.length
-  return gradients[idx]
-}
 
 function formatRelativeTime(date: Date): string {
   const now = Date.now()
