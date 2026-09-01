@@ -237,20 +237,20 @@ export default function CommandPalette({
     const nav: Command[] = [
       {
         id: 'nav-new',
-        label: 'New workspace',
+        label: 'New space',
         icon: <Plus size={15} weight="bold" />,
         run: () => navigate({ to: '/' }),
       },
       ...formatCommands,
       {
         id: 'nav-workspaces',
-        label: 'Workspaces',
+        label: 'Spaces',
         icon: <SquaresFour size={15} />,
         run: () => navigate({ to: '/workspaces' }),
       },
       {
         id: 'nav-blueprints',
-        label: 'Blueprints',
+        label: 'Templates',
         icon: <Blueprint size={15} />,
         run: () => navigate({ to: '/explore' }),
       },
@@ -260,8 +260,8 @@ export default function CommandPalette({
       .toSorted((a, b) => b.lastActive.getTime() - a.lastActive.getTime())
       .map((g) => ({
         id: `ws-${g.id}`,
-        label: g.title || 'Untitled workspace',
-        hint: 'Workspace',
+        label: g.title || 'Untitled space',
+        hint: 'Space',
         icon: <SquaresFour size={15} className="text-kumo-inactive" />,
         run: () => navigate({ to: '/workspace/$id', params: { id: g.id } }),
       }))
@@ -271,7 +271,7 @@ export default function CommandPalette({
       .map((b) => ({
         id: `bp-${b.id}`,
         label: b.title,
-        hint: 'Blueprint',
+        hint: 'Template',
         icon: <Blueprint size={15} className="text-kumo-inactive" />,
         run: () => navigate({ to: '/blueprint/$id', params: { id: b.id } }),
       }))
@@ -292,12 +292,12 @@ export default function CommandPalette({
     const built: Group[] = searching
       ? [
           { heading: 'Actions', items: refine(nav, nav.length) },
-          { heading: 'Workspaces', items: refine(wsBase, 8) },
-          { heading: 'Blueprints', items: refine(bpBase, 8) },
+          { heading: 'Spaces', items: refine(wsBase, 8) },
+          { heading: 'Templates', items: refine(bpBase, 8) },
         ]
       : [
           { heading: 'Actions', items: refine(nav, nav.length) },
-          { heading: 'Recent workspaces', items: refine(wsBase, 4) },
+          { heading: 'Recent spaces', items: refine(wsBase, 4) },
         ]
 
     const groups = built.filter((g) => g.items.length > 0)
@@ -358,7 +358,7 @@ export default function CommandPalette({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder="Search workspaces and actions…"
+            placeholder="Search spaces, templates and actions…"
             className="h-12 w-full bg-transparent text-[14px] leading-5 tracking-[-0.25px] text-kumo-default placeholder:text-kumo-inactive focus:outline-none"
           />
           <kbd className="shrink-0 rounded border border-kumo-line px-1.5 py-0.5 font-sans text-[10px] leading-none text-kumo-inactive">

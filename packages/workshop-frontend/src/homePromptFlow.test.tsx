@@ -8,9 +8,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 const testState = vi.hoisted(() => {
   const listModels = vi.fn<() => Promise<never[]>>(async () => []);
   const newGadget = vi.fn<() => never>();
+  const listGadgets = vi.fn<() => Promise<never[]>>(async () => []);
   return {
     addToast: vi.fn<(toast: unknown) => void>(),
-    authenticatedApi: { listModels, newGadget },
+    authenticatedApi: { listModels, newGadget, listGadgets },
     currentUser: { id: "user-a", name: "User A" },
     listModels,
     navigate: vi.fn<(options: unknown) => void>(),

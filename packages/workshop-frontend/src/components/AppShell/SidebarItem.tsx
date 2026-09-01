@@ -48,16 +48,16 @@ export default function SidebarItem({
       {...linkProps}
       title={collapsed ? label : undefined}
       className={[
-        'group relative flex h-11 items-center gap-2.5 rounded-lg px-2.5 text-[14px] leading-5 transition-colors md:h-8 md:text-[13px] md:leading-[18px]',
+        'group relative flex h-11 items-center gap-2.5 rounded-md px-2 text-[14px] leading-5 md:h-7 md:text-[13px] md:leading-[18px]',
         isActive
           ? 'bg-kumo-fill font-medium text-kumo-strong'
-          : 'font-normal text-kumo-default hover:bg-kumo-tint',
+          : 'font-normal text-kumo-subtle hover:bg-kumo-tint hover:text-kumo-default',
       ].join(' ')}
     >
       <span
         className={[
-          'flex h-5 w-5 shrink-0 items-center justify-center transition-colors',
-          isActive ? 'text-kumo-brand' : 'text-kumo-subtle group-hover:text-kumo-default',
+          'flex h-5 w-5 shrink-0 items-center justify-center',
+          isActive ? 'text-kumo-brand' : 'text-kumo-inactive group-hover:text-kumo-subtle',
         ].join(' ')}
       >
         {icon}

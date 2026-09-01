@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Clock, MagnifyingGlass, Hexagon, DotsThreeVertical, ShareNetwork, Trash, Info, Star, Pencil, ArrowRight } from '@phosphor-icons/react'
+import { Clock, MagnifyingGlass, Shapes, DotsThreeVertical, ShareNetwork, Trash, Info, Star, Pencil, ArrowRight } from '@phosphor-icons/react'
 import { useState, useEffect, useRef } from 'react'
 import { DropdownMenu, Dialog, Button, useKumoToastManager } from '@cloudflare/kumo'
 import { RpcStub } from 'capnweb'
@@ -239,7 +239,7 @@ export default function GadgetList({ showHeader = true }: { showHeader?: boolean
     try {
       if (deleteTarget.owner) {
         await authenticatedApi.dismissSharedGadget(deleteTarget.id)
-        toasts.add({ title: 'Workspace removed from list', variant: 'success' })
+        toasts.add({ title: 'Space removed from list', variant: 'success' })
       } else {
         const overseer = await authenticatedApi.openGadget(deleteTarget.id)
         try {
@@ -247,12 +247,12 @@ export default function GadgetList({ showHeader = true }: { showHeader?: boolean
         } finally {
           overseer[Symbol.dispose]()
         }
-        toasts.add({ title: 'Workspace deleted', variant: 'success' })
+        toasts.add({ title: 'Space deleted', variant: 'success' })
       }
       setGadgets(prev => prev.filter(g => g.id !== deleteTarget.id))
     } catch (err) {
       console.error('Failed to delete workspace:', err)
-      toasts.add({ title: 'Failed to delete workspace', variant: 'error' })
+      toasts.add({ title: 'Failed to delete space', variant: 'error' })
     } finally {
       setIsDeleting(false)
       setDeleteTarget(null)
@@ -315,7 +315,7 @@ export default function GadgetList({ showHeader = true }: { showHeader?: boolean
     } catch (err) {
       console.error('Failed to rename workspace:', err)
       setGadgets(prev => prev.map(g => g.id === gadget.id ? { ...g, title: gadget.title } : g))
-      toasts.add({ title: 'Failed to rename workspace', variant: 'error' })
+      toasts.add({ title: 'Failed to rename space', variant: 'error' })
     } finally {
       (await overseer)[Symbol.dispose]()
     }
@@ -336,11 +336,11 @@ export default function GadgetList({ showHeader = true }: { showHeader?: boolean
       {showHeader && (
         <div className="px-6 sm:px-10 lg:px-10 pt-10 lg:pt-10 mb-4">
           <h2 className="text-lg font-semibold text-kumo-default">
-            Your workspaces
+            Your spaces
           </h2>
           {!loading && gadgets.length === 0 && !loadError && (
             <p className="mt-1 text-sm text-kumo-inactive">
-              You haven&apos;t created any workspaces yet
+              You haven&apos;t created any spaces yet
             </p>
           )}
         </div>
@@ -358,7 +358,7 @@ export default function GadgetList({ showHeader = true }: { showHeader?: boolean
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search workspaces…"
+              placeholder="Search spaces…"
               className="h-9 w-full rounded-lg border border-kumo-line bg-kumo-base pl-9 pr-4 text-[13px] tracking-[-0.25px] text-kumo-default placeholder:text-kumo-inactive transition-[border-color,box-shadow] duration-150 ease-out focus:border-kumo-ring focus:outline-none focus:ring-[3px] focus:ring-kumo-ring/15"
             />
           </div>
@@ -377,13 +377,13 @@ export default function GadgetList({ showHeader = true }: { showHeader?: boolean
           </>
         ) : loadError ? (
           <div className="text-center py-12 text-sm">
-            <p className="text-kumo-danger">Something went wrong loading your workspaces.</p>
+            <p className="text-kumo-danger">Something went wrong loading your spaces.</p>
             <button onClick={loadGadgets} className="text-kumo-brand mt-1 underline">Try again</button>
           </div>
         ) : filtered.length === 0 ? (
           search ? (
             <div className="text-center py-12 text-kumo-inactive text-sm">
-              No workspaces found
+              No spaces found
             </div>
           ) : (
             <FeaturedBlueprintsGallery />
@@ -495,7 +495,7 @@ function HomeFeaturedBlueprintCard({
       <Link
         to="/blueprint/$id"
         params={{ id: blueprint.id }}
-        aria-label={`Open blueprint ${blueprint.metadata.title}`}
+        aria-label={`Open template ${blueprint.metadata.title}`}
         className="absolute inset-0 z-10 rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kumo-brand"
       />
       <div className="pointer-events-none relative z-20 flex flex-1 flex-col p-2.5">
@@ -507,7 +507,7 @@ function HomeFeaturedBlueprintCard({
         />
         <div className="flex min-w-0 items-start gap-2 px-1 pb-1">
           <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-gradient-to-br ${getBlueprintGradient(blueprint.id)}`}>
-            <Hexagon size={13} className="text-white/75" weight="bold" />
+            <Shapes size={13} className="text-white/80" weight="bold" />
           </div>
           <div className="min-w-0 flex-1">
             <p className="m-0 truncate text-[13px] leading-[18px] font-semibold tracking-[-0.25px] text-kumo-default">
@@ -574,7 +574,7 @@ function FeaturedBlueprintsGallery() {
     <div className="py-4 pr-4 sm:pr-6">
       <div className="mb-5">
         <h3 className="text-[13px] leading-[18px] font-medium tracking-[-0.25px] text-kumo-default">
-          Start from a featured blueprint.
+          Start from a featured template.
         </h3>
       </div>
 
@@ -593,7 +593,7 @@ function FeaturedBlueprintsGallery() {
             to="/explore"
             className="inline-flex items-center gap-1.5 text-xs font-medium text-kumo-brand hover:text-kumo-brand-hover transition-colors"
           >
-            Browse all blueprints
+            Browse all templates
             <ArrowRight size={12} weight="bold" />
           </Link>
         </div>

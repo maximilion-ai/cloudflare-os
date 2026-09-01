@@ -19,7 +19,6 @@ import {
   UsersThree,
   Key,
   Plugs,
-  Hexagon,
 } from '@phosphor-icons/react'
 import AddModelModal from './AddModelModal'
 import { persistSelectedModel } from './modelSelection'
@@ -30,6 +29,7 @@ import { invalidateAvatarCache } from './useAvatar'
 import { useTheme } from './ThemeContext'
 import { useSiteName } from './ServerConfigContext'
 import SiteLogo from './components/SiteLogo'
+import GartenMark from './components/GartenMark'
 import { useDocumentTitle } from './useDocumentTitle'
 import { AccountsSubscriberAdapter } from './accountsSubscriber'
 
@@ -338,9 +338,9 @@ export default function OnboardingWizard({
           }`}
         >
           <SiteLogo size={22}>
-            <Hexagon size={22} className="text-kumo-brand" weight="bold" />
+            <GartenMark size={22} />
           </SiteLogo>
-          <span className="text-base font-semibold tracking-tight text-kumo-default">
+          <span className="font-display text-[18px] font-semibold text-kumo-default">
             {siteName}
           </span>
         </div>
@@ -359,7 +359,7 @@ export default function OnboardingWizard({
               mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
             }`}
           >
-            Just a few things before you start building
+            Three quick things, then your garden is ready
           </p>
         </div>
 
@@ -391,7 +391,7 @@ export default function OnboardingWizard({
                 Create your profile
               </h2>
               <p className="text-sm text-kumo-subtle mb-12">
-                This is how you&apos;ll appear in conversations
+                How you appear to your agent and the people you share with
               </p>
 
               {/* Avatar + Display name side by side */}
@@ -564,7 +564,7 @@ export default function OnboardingWizard({
                   Connect your services
                 </h2>
                 <p className="text-sm text-kumo-subtle mb-6">
-                  Link your accounts so your gadgets can access them. You can always add more later.
+                  Link the accounts your apps may use. You can always add more later.
                 </p>
 
                 {vendorsLoading ? (
@@ -691,7 +691,7 @@ export default function OnboardingWizard({
                     </>
                   ) : (
                     <>
-                      Let&apos;s build
+                      Open my garden
                       <ArrowRight size={14} weight="bold" />
                     </>
                   )}
@@ -735,9 +735,9 @@ const SHOWCASE_FEATURES: ShowcaseFeature[] = [
     icon: Sparkle,
     iconColor: 'text-media-100',
     iconBg: 'bg-media-200',
-    title: 'Build gadgets or just chat',
+    title: 'Make things, or just talk',
     description:
-      'Create full web apps, or keep it simple with agent-only conversations. Your call.',
+      'Docs, boards, canvases and small apps, grown from a sentence. Or keep it to a conversation.',
   },
   {
     icon: UsersThree,
@@ -745,23 +745,23 @@ const SHOWCASE_FEATURES: ShowcaseFeature[] = [
     iconBg: 'bg-compute-200',
     title: 'Collaborate in real time',
     description:
-      'Share a workspace with teammates and work on it together, live.',
+      'Share a space with friends or your team and edit together, live.',
   },
   {
     icon: Key,
     iconColor: 'text-kumo-warning',
     iconBg: 'bg-kumo-warning-tint',
-    title: 'Bring your own models',
+    title: 'Your models, your keys',
     description:
-      'Plug in personal API tokens from any provider to use the models you love.',
+      'Use the built-in models, or add your own keys from any provider.',
   },
   {
     icon: Plugs,
     iconColor: 'text-storage-100',
     iconBg: 'bg-storage-200',
-    title: 'AI meets your tools',
+    title: 'Connect what you already use',
     description:
-      'Have AI review a Google Doc, summarize Slack threads, triage Jira tickets, and more.',
+      'Let your agent read a Google Doc, tidy a Notion page or watch a calendar. You approve every action.',
   },
 ]
 

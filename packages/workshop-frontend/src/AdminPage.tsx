@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, type ChangeEvent } from 'react'
 import { RpcStub } from 'capnweb'
 import { Switch, Textarea, Input, Button, Tabs, useKumoToastManager } from '@cloudflare/kumo'
-import { Hexagon, ShieldWarning, UserPlus } from '@phosphor-icons/react'
+import { ShieldWarning, UserPlus } from '@phosphor-icons/react'
+import GartenMark from './components/GartenMark'
 import { useAuthenticatedApi } from './AuthContext'
 import { AdminApi, AdminFormat, AdminResourceVendor, AmbientGatekeeperMode, MAX_INSTANCE_INSTRUCTIONS_LENGTH, MAX_ANNOUNCEMENT_LENGTH, MAX_SITE_NAME_LENGTH, DEFAULT_SITE_NAME, BannerColor, BANNER_COLORS, DEFAULT_BANNER_COLOR } from '@gadgets/workshop-shared/api'
 import { applyAccentColor, DEFAULT_ACCENT_COLOR } from './theme'
@@ -401,7 +402,7 @@ export default function AdminPage() {
         onValueChange={setActiveTab}
         tabs={[
           { value: 'general', label: 'General' },
-          { value: 'gatekeepers', label: 'Gatekeepers' },
+          { value: 'gatekeepers', label: 'Connections' },
           { value: 'formats', label: 'Formats' },
           { value: 'access', label: 'Access' },
         ]}
@@ -491,7 +492,7 @@ export default function AdminPage() {
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-kumo-line bg-kumo-base p-2">
               <SiteLogo size={40} srcOverride={siteLogoUrl}>
-                <Hexagon size={32} weight="bold" className="text-kumo-brand" />
+                <GartenMark size={32} />
               </SiteLogo>
             </div>
             <input
@@ -614,7 +615,7 @@ export default function AdminPage() {
             value={bannerTextDraft}
             onValueChange={setBannerTextDraft}
             rows={1}
-            placeholder={'e.g. \uD83C\uDF89 New: blueprints now support imports \u2014 [learn more](https://example.com).'}
+            placeholder={'e.g. \uD83C\uDF89 New: templates now support imports \u2014 [learn more](https://example.com).'}
             maxLength={MAX_ANNOUNCEMENT_LENGTH}
             error={
               bannerTextDraft.length > MAX_ANNOUNCEMENT_LENGTH
@@ -793,17 +794,17 @@ export default function AdminPage() {
       {/* Gatekeeper resources */}
       {activeTab === 'gatekeepers' && (
         <div className="bg-kumo-elevated border border-kumo-line rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-kumo-strong mb-1">Gatekeepers</h2>
+          <h2 className="text-lg font-semibold text-kumo-strong mb-1">Connections</h2>
           <p className="text-sm text-kumo-subtle mb-5">
             Turn connectors and resource types on or off for each service. Auto-provisioned
-            gatekeepers (like the Context Library) have three modes &mdash; disabled, optional, or
-            enabled for everyone. Changes are soft: they don&rsquo;t revoke access a gadget already
+            connections (like the Context Library) have three modes &mdash; disabled, optional, or
+            enabled for everyone. Changes are soft: they don&rsquo;t revoke access an app already
             holds.
           </p>
 
           {resourceVendors.length === 0 && (
             <p className="text-sm text-kumo-subtle">
-              No configurable gatekeepers are installed on this deployment.
+              No configurable connections are installed on this deployment.
             </p>
           )}
 

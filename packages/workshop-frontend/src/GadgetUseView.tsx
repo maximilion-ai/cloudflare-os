@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { Hexagon } from '@phosphor-icons/react'
+import GartenMark from './components/GartenMark'
 import { FormatGlyph } from './components/format/FormatVisuals'
 import { RpcStub } from 'capnweb'
 import {
@@ -66,7 +66,7 @@ export default function GadgetUseView({
         <div className="flex items-center gap-2 min-w-0">
           <Link to="/" aria-label="Home" className="flex-shrink-0 hover:opacity-80 transition-opacity">
             <SiteLogo size={22}>
-              <Hexagon size={22} className="text-kumo-brand" weight="bold" />
+              <GartenMark size={22} />
             </SiteLogo>
           </Link>
 
@@ -111,7 +111,7 @@ export default function GadgetUseView({
         <div className="flex items-center gap-2 flex-shrink-0">
           <GadgetExportMenu
             gadget={gadget}
-            gadgetTitle={gadgets.find(g => g.id === selectedGadgetId)?.title ?? 'Gadget'}
+            gadgetTitle={gadgets.find(g => g.id === selectedGadgetId)?.title ?? 'App'}
           />
           <span className="hidden md:inline-flex">
             <GadgetPresence
@@ -155,7 +155,7 @@ export default function GadgetUseView({
           />
         ) : (
           <div className="flex h-full items-center justify-center px-6 text-center">
-            <p className="text-sm text-kumo-subtle">This workspace has no gadgets yet.</p>
+            <p className="text-sm text-kumo-subtle">This space has no apps yet.</p>
           </div>
         )}
       </div>

@@ -6,7 +6,9 @@
     "dev": "vite",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "ui:tour": "node scripts/ui-tour.mjs",
+    "vocab:check": "node scripts/vocab-check.mjs"
   },
   "dependencies": {
     "@cloudflare/kumo": "^2.9.2",
@@ -53,6 +55,7 @@
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^5.2.0",
     "jsdom": "^26.1.0",
+    "playwright": "1.58.2",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:"

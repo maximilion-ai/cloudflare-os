@@ -3423,7 +3423,7 @@ export const ChatInput = ({
                   : isAgentActive
                     ? "Waiting for agent…"
                     : newChat
-                      ? "Start a new conversation…"
+                      ? "Ask for anything…"
                       : "Ask a follow-up…"
               }
               autoFocus={autoFocus}
@@ -6042,14 +6042,14 @@ function ChatInterface({
       setStaleAcceptChatId(null);
       if (conflictPaths.length > 0) {
         toasts.add({
-          title: `Updated this draft with the gadget's latest changes. ` +
+          title: `Updated this draft with the app's latest changes. ` +
             `${conflictPaths.length} ${conflictPaths.length === 1 ? "file has" : "files have"} ` +
             `conflicts marked in the code -- resolve them (or ask the agent to), then accept again.`,
           variant: "warning",
         });
       } else {
         toasts.add({
-          title: "Updated this draft with the gadget's latest changes. Review and accept again.",
+          title: "Updated this draft with the app's latest changes. Review and accept again.",
           variant: "success",
         });
       }
@@ -7481,12 +7481,12 @@ function ChatInterface({
                         const mainlineMerge = entry.message.mainlineMerge;
                         const conflictCount = mainlineMerge?.conflictPaths.length ?? 0;
                         const label = mainlineMerge
-                          ? `${actor} brought the gadget's latest changes into this draft${
+                          ? `${actor} brought the app's latest changes into this draft${
                               conflictCount > 0
                                 ? ` — ${conflictCount} ${conflictCount === 1 ? "file has" : "files have"} conflicts marked in the code`
                                 : ""}`
                           : createdGadgets.length > 0
-                          ? `${actor} created ${createdGadgets.length === 1 ? "gadget" : "gadgets"} ${
+                          ? `${actor} created ${createdGadgets.length === 1 ? "app" : "apps"} ${
                               createdGadgets.map((g) => `“${g.title}”`).join(", ")}`
                           : `${actor} saved edits`;
                         // A still-proposed mainline merge can't be reverted: it advanced the
@@ -7847,12 +7847,12 @@ function ChatInterface({
 
                         {msg.type === "useGadget" && (
                           <div className="max-w-[860px] text-[14px] leading-5 tracking-[-0.25px] text-kumo-subtle">
-                            <Tooltip content={`Used the gadget at ${formatFullTimestamp(msg.timestamp)}`} asChild>
+                            <Tooltip content={`Used the app at ${formatFullTimestamp(msg.timestamp)}`} asChild>
                               <span className="inline-flex items-center gap-3 px-1.5 py-1">
                                 <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center text-kumo-inactive" aria-hidden="true">
                                   <Plug size={16} />
                                 </span>
-                                <span>Used the gadget</span>
+                                <span>Used the app</span>
                               </span>
                             </Tooltip>
                           </div>
@@ -7988,7 +7988,7 @@ function ChatInterface({
                                   Discard
                                 </button>
                               </Tooltip>
-                              <Tooltip content="Save these edits as a draft version. They won't affect the gadget until you accept changes." asChild>
+                              <Tooltip content="Save these edits as a draft version. They won't affect the app until you accept changes." asChild>
                                 <button
                                   type="button"
                                   disabled={isAgentActive}
@@ -8259,7 +8259,7 @@ function ChatInterface({
           <div className="flex items-start justify-between gap-4 border-b border-kumo-line px-5 py-4">
             <div className="min-w-0">
               <Dialog.Title className="text-[15px] leading-5 font-medium tracking-[-0.3px] text-kumo-default">
-                The gadget changed since this draft started
+                The app changed since this draft started
               </Dialog.Title>
               <Dialog.Description className="mt-1 text-[12px] leading-4 font-normal tracking-[-0.2px] text-kumo-subtle">
                 Someone else&apos;s changes were accepted in the meantime, so this draft&apos;s

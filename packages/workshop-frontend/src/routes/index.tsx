@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useKumoToastManager } from "@cloudflare/kumo";
 import { ChatInput } from "../ChatInterface";
-import MeshBackground from "../components/MeshBackground";
+import HomeRecentSpaces from "../components/HomeRecentSpaces";
 import HomeTaskSuggestions from "../components/AppShell/HomeTaskSuggestions";
 import { useAuthenticatedApi } from "../AuthContext";
 import { RpcStub } from "capnweb";
@@ -130,7 +130,7 @@ export function HomePageContent({ prompt }: HomeSearch) {
           provisionalOverseerRef.current = null;
         }
         if (!transient) {
-          toasts.add({ title: "Failed to create workspace", variant: "error" });
+          toasts.add({ title: "Failed to create space", variant: "error" });
         }
         throw err;
       }
@@ -152,31 +152,14 @@ export function HomePageContent({ prompt }: HomeSearch) {
   );
 
   return (
-    // Flat enterprise treatment: no mesh, no watermark hexagon, no prompt-glow. The AppShell's
-    // <main> already supplies a faint dotted grid as the page background.
-    <div className="relative isolate flex min-h-full w-full flex-col items-center justify-start px-4 pb-16 pt-10 sm:px-8 sm:pt-16 lg:pt-24">
-      {/* The brand hex mesh, restored and de-warmed for the new system: a gentle perspective hex
-          grid receding upward. Masked to fade out before the composer so it stays a quiet backdrop. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[460px] overflow-hidden"
-        style={{
-          maskImage:
-            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 95%)",
-          WebkitMaskImage:
-            "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 95%)",
-        }}
-      >
-        <MeshBackground />
-      </div>
+    <div className="home-ground relative isolate flex min-h-full w-full flex-col items-center justify-start px-4 pb-16 pt-10 sm:px-8 sm:pt-20 lg:pt-28">
       <div className="flex w-full max-w-2xl flex-col items-stretch gap-8">
-        {/* Hero */}
         <header className="text-center">
-          <h1 className="text-3xl font-semibold tracking-tight leading-tight text-kumo-default sm:text-4xl">
-            What are we working on?
+          <h1 className="text-[34px] font-semibold leading-tight text-kumo-default sm:text-[40px]">
+            What do you want to make?
           </h1>
-          <p className="mx-auto mt-3 max-w-md text-[14px] leading-5 tracking-[-0.25px] text-kumo-subtle">
-            Ask a question, create an output, or create an app that works with your tools and data.
+          <p className="mx-auto mt-3 max-w-md text-[14px] leading-5 tracking-[-0.1px] text-kumo-subtle">
+            Ask for a doc, a plan, a canvas or a small app. Your agent builds it here, and it stays yours.
           </p>
         </header>
 
@@ -200,7 +183,9 @@ export function HomePageContent({ prompt }: HomeSearch) {
             : undefined}
         />
 
-        {/* A few example work tasks to spark ideas. Picking one seeds the composer above. */}
+        <HomeRecentSpaces />
+
+        {/* A few example tasks to spark ideas. Picking one seeds the composer above. */}
         <HomeTaskSuggestions
           onPick={(suggestion) =>
             setSeed((prev) => ({ text: suggestion, nonce: (prev?.nonce ?? 0) + 1 }))
