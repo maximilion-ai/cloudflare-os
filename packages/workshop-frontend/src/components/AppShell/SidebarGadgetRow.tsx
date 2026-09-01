@@ -61,7 +61,7 @@ export default function SidebarGadgetRow({
       onClick={(e) => {
         if (renaming) e.preventDefault()
       }}
-      title={collapsed ? gadget.title || 'Untitled workspace' : undefined}
+      title={collapsed ? gadget.title || 'Untitled space' : undefined}
     >
       <div
         className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-kumo-fill text-[10px] font-medium text-kumo-subtle"
@@ -87,7 +87,7 @@ export default function SidebarGadgetRow({
               onClick={(e) => e.preventDefault()}
             />
           ) : (
-            <span className="min-w-0 flex-1 truncate">{gadget.title || 'Untitled workspace'}</span>
+            <span className="min-w-0 flex-1 truncate">{gadget.title || 'Untitled space'}</span>
           )}
 
           {/* Inside the row's <Link>: stopPropagation blocks the Link's SPA handler, so preventDefault
@@ -141,7 +141,7 @@ export default function SidebarGadgetRow({
       )}
 
       {/* Collapsed rows show only the monogram (aria-hidden), so name the link for screen readers. */}
-      {collapsed && <span className="sr-only">{gadget.title || 'Untitled workspace'}</span>}
+      {collapsed && <span className="sr-only">{gadget.title || 'Untitled space'}</span>}
     </Link>
   )
 }

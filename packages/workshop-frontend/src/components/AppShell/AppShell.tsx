@@ -136,32 +136,38 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Main column */}
       <div
-        className="flex min-w-0 flex-1 flex-col"
+        className="relative flex min-w-0 flex-1 flex-col"
         inert={mobileOpen ? true : undefined}
         aria-hidden={mobileOpen ? true : undefined}
       >
-        {/* Top bar. Same height as the sidebar's brand row (h-14) so they read as one continuous
-            chrome strip across the top. Mostly empty — carries the mobile hamburger on the left,
-            any admin TopBarNotice centered, and the reconnecting chip on the right. */}
-        <div className="relative flex h-14 shrink-0 items-center justify-between border-b border-kumo-line bg-kumo-base px-3">
+        {/* Mobile top band: hamburger + notice. On desktop there is no chrome strip; the page
+            header owns the top of the column and the reconnecting chip floats over it. */}
+        <div className="relative flex h-12 shrink-0 items-center justify-between border-b border-kumo-line px-2 md:hidden">
           <button
             type="button"
             ref={menuButtonRef}
             onClick={() => setMobileOpen((o) => !o)}
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
-            className="flex h-11 w-11 items-center justify-center rounded-md text-kumo-default transition-colors hover:bg-kumo-tint md:hidden"
+            className="flex h-10 w-10 items-center justify-center rounded-md text-kumo-default hover:bg-kumo-tint"
           >
             {mobileOpen ? <X size={16} /> : <List size={16} />}
           </button>
           <TopBarNotice />
-          {/* `ml-auto` rather than the container's `justify-between`: on desktop the hamburger is
-              hidden, leaving this the only in-flow child, which `justify-between` would park on the
-              left. */}
           <div className="ml-auto flex items-center gap-2">
             {connectionLost && <ReconnectingChip />}
-            <span aria-hidden="true" className="h-11 w-11 md:hidden" />
+            <span aria-hidden="true" className="h-10 w-10" />
           </div>
         </div>
+        <div className="hidden md:block">
+          <TopBarNotice />
+        </div>
+        {connectionLost && (
+          <div className="pointer-events-none absolute right-4 top-3 z-30 hidden md:block">
+            <div className="pointer-events-auto">
+              <ReconnectingChip />
+            </div>
+          </div>
+        )}
 
         {/* Routed content. Flat enterprise canvas — no texture. */}
         <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>

@@ -20,6 +20,9 @@ html:root {
   --color-accent-soft: light-dark(oklch(0.46 0.08 150deg / 10%), oklch(0.79 0.1 150deg / 14%));
   --color-accent-fill: light-dark(oklch(0.46 0.08 150deg), oklch(0.46 0.09 150deg));
   --color-accent-fill-hover: light-dark(oklch(0.38 0.08 150deg), oklch(0.38 0.09 150deg));
+  --color-accent-leaf: light-dark(oklch(0.84 0.09 140deg), oklch(0.8 0.1 140deg));
+  /* The rail (sidebar) sits on paper; the page it opens onto is a hair lighter. */
+  --color-rail: var(--color-canvas);
   --color-agent: light-dark(oklch(0.55 0.07 300deg), oklch(0.72 0.07 300deg));
   --color-agent-soft: light-dark(oklch(0.55 0.07 300deg / 10%), oklch(0.72 0.07 300deg / 14%));
   --color-info: light-dark(oklch(0.52 0.09 250deg), oklch(0.74 0.09 250deg));
@@ -44,7 +47,7 @@ html:root {
 
   /* Kumo semantic translation */
   --color-kumo-canvas: var(--color-canvas);
-  --color-kumo-base: var(--color-canvas);
+  --color-kumo-base: var(--color-surface);
   --color-kumo-elevated: var(--color-surface);
   --color-kumo-tint: var(--color-surface-muted);
   --color-kumo-overlay: var(--color-surface);
@@ -134,7 +137,46 @@ html:root {
 @layer base {
   h1 {
     font-family: var(--font-display);
+    font-variation-settings: "opsz" 40;
+    letter-spacing: -0.01em;
   }
+
+  /* One branded focus ring everywhere, both themes. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Interactive elements ease their paint changes; never layout. */
+  a,
+  button,
+  summary,
+  [role="option"],
+  [role="button"] {
+    transition-property: color, background-color, border-color, opacity, transform;
+    transition-duration: var(--duration-fast);
+    transition-timing-function: var(--ease-out);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --duration-fast: 0ms;
+      --duration-slow: 0ms;
+      --duration-nav: 0ms;
+    }
+  }
+}
+
+/* Rail vocabulary shared by the sidebar and the mobile drawer. */
+.rail {
+  background-color: var(--color-rail);
+}
+.rail-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
 }
 
 .template-card:hover,
