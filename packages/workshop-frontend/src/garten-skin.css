@@ -232,3 +232,10 @@ html:root {
 [data-mode="dark"] .themed-row-hover-shadow:hover {
   box-shadow: 0 8px 20px -18px var(--color-shadow);
 }
+
+/* Home ground: a quiet wash of light from above, in place of a grid. */
+.home-ground {
+  background:
+    radial-gradient(60% 40% at 50% -5%, var(--color-accent-soft), transparent 70%),
+    var(--color-kumo-base);
+}
