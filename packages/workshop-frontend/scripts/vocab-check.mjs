@@ -37,6 +37,14 @@ const SKIP_FILE = /(\.test\.tsx?$|routeTree\.gen\.ts$)/
 // Route paths and code identifiers are not copy.
 const NOT_COPY = /^\s*(\/[\w/$-]*|[\w$.-]+)\s*$|[=;\[\]]|^\s*[,)]/
 
+function* walkAll(dir) {
+  for (const entry of readdirSync(dir)) {
+    const p = join(dir, entry)
+    if (statSync(p).isDirectory()) yield* walkAll(p)
+    else if (/\.tsx?$/.test(p) && !SKIP_FILE.test(p)) yield p
+  }
+}
+
 function* walk(dir) {
   for (const entry of readdirSync(dir)) {
     const p = join(dir, entry)
@@ -47,6 +55,22 @@ function* walk(dir) {
 
 const hits = []
 const base = join(import.meta.dirname, '..')
+// Connection (gatekeeper) authorization pages are served by their own packages; only the brand
+// name is checked there because their other nouns are internal.
+const packagesDir = join(base, '..')
+const BRAND = /\bcloudflare os\b/i
+for (const pkg of readdirSync(packagesDir)) {
+  if (!/^(gatekeeper-|mcp-shared$)/.test(pkg)) continue
+  const srcDir = join(packagesDir, pkg, 'src')
+  let files = []
+  try { files = [...walkAll(srcDir)] } catch { continue }
+  for (const file of files) {
+    const src = readFileSync(file, 'utf8')
+    src.split('\n').forEach((line, i) => {
+      if (BRAND.test(line)) hits.push(`${relative(base, file)}:${i + 1}: ${line.trim().slice(0, 110)}`)
+    })
+  }
+}
 for (const file of walk(join(base, 'src'))) {
   const src = readFileSync(file, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
   const seen = new Set()

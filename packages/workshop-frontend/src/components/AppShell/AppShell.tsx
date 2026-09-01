@@ -4,6 +4,7 @@ import { List, X } from '@phosphor-icons/react'
 import TopBarNotice from '../../TopBarNotice'
 import ReconnectingChip from '../ReconnectingChip'
 import { useConnectionLost } from '../../RpcContext'
+import { useServerConfig } from '../../ServerConfigContext'
 import Sidebar from './Sidebar'
 import CommandPalette from './CommandPalette'
 import { OPEN_COMMAND_PALETTE_EVENT } from './commandPaletteBus'
@@ -35,6 +36,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const drawerRef = useRef<HTMLDivElement>(null)
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const connectionLost = useConnectionLost()
+  const announcement = (useServerConfig()?.announcement ?? '').trim()
 
   const toggleCollapsed = useCallback(() => {
     setCollapsed((prev) => {
@@ -158,9 +160,11 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             <span aria-hidden="true" className="h-10 w-10" />
           </div>
         </div>
-        <div className="hidden md:block">
-          <TopBarNotice />
-        </div>
+        {announcement && (
+          <div className="relative hidden h-9 shrink-0 items-center border-b border-kumo-line md:flex">
+            <TopBarNotice />
+          </div>
+        )}
         {connectionLost && (
           <div className="pointer-events-none absolute right-4 top-3 z-30 hidden md:block">
             <div className="pointer-events-auto">

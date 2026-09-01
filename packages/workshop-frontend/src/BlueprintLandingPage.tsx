@@ -586,7 +586,7 @@ export default function BlueprintLandingPage({ rpcStub }: Props) {
         () => rpcStub.downloadBlueprint(id),
         makeBlueprintFilename(blueprint.metadata.title, blueprint.metadata.version),
         {
-          description: 'Gadget Blueprint',
+          description: 'Garten template',
           contentType: 'application/octet-stream',
           extension: BLUEPRINT_ARCHIVE_EXTENSION,
         },

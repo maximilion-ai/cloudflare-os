@@ -47,7 +47,8 @@ html:root {
 
   /* Kumo semantic translation */
   --color-kumo-canvas: var(--color-canvas);
-  --color-kumo-base: var(--color-surface);
+  /* The page sits between the rail (canvas) and elevated surfaces (surface) so cards and dialogs keep a step of depth. */
+  --color-kumo-base: color-mix(in srgb, var(--color-surface) 65%, var(--color-canvas));
   --color-kumo-elevated: var(--color-surface);
   --color-kumo-tint: var(--color-surface-muted);
   --color-kumo-overlay: var(--color-surface);
