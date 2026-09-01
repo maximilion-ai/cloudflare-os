@@ -184,7 +184,7 @@ export default function Activity({
   if (!isReady) {
     return (
       <div className="flex h-full items-center justify-center text-[13px] text-kumo-subtle">
-        Loading activity…
+        Loading timeline…
       </div>
     )
   }
@@ -201,7 +201,7 @@ export default function Activity({
               Nothing to review
             </p>
             <p className="mt-1 max-w-xs text-[13px] leading-[18px] tracking-[-0.25px] text-kumo-subtle">
-              Requests that need your approval show up here and in the workspace header.
+              Requests that need your approval show up here and in the space header.
             </p>
             <WorkshopButton className="mt-4" onClick={() => onViewChange('history')}>
               View history
@@ -276,7 +276,7 @@ export default function Activity({
           {historyTotal === 0 ? (
             <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
               <p className="m-0 text-[13px] font-medium leading-[18px] tracking-[-0.25px] text-kumo-default">
-                No activity yet
+                Nothing on the timeline yet
               </p>
               <p className="mt-1 max-w-xs text-[13px] leading-[18px] tracking-[-0.25px] text-kumo-subtle">
                 Every resource an agent reads or changes is recorded here.
@@ -290,7 +290,7 @@ export default function Activity({
                 onClick={() => setHistoryFilter('all')}
                 className="mt-1.5 cursor-pointer text-[12px] font-medium text-kumo-subtle hover:text-kumo-default"
               >
-                Show all activity
+                Show full timeline
               </button>
             </div>
           ) : (

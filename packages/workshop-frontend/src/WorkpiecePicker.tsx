@@ -100,7 +100,7 @@ export default function WorkpiecePicker({
                   onClick={commitRename}
                   disabled={!editing.value.trim()}
                   className="!h-6 !w-6"
-                  aria-label="Save gadget name"
+                  aria-label="Save app name"
                 >
                   <Check size={13} />
                 </WorkshopIconButton>
@@ -175,7 +175,7 @@ export default function WorkpiecePicker({
                 <WorkshopIconButton
                   onClick={() => setEditing({ id: gadget.id, value: gadget.title })}
                   className="!h-6 !w-6 flex-shrink-0 opacity-0 transition-opacity duration-150 ease-out group-hover/workpiece:opacity-100 focus-visible:opacity-100"
-                  title="Rename gadget"
+                  title="Rename app"
                   aria-label={`Rename ${gadget.title}`}
                 >
                   <PencilSimple size={13} />

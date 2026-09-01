@@ -261,7 +261,7 @@ export default function CommandPalette({
       .map((g) => ({
         id: `ws-${g.id}`,
         label: g.title || 'Untitled space',
-        hint: 'Workspace',
+        hint: 'Space',
         icon: <SquaresFour size={15} className="text-kumo-inactive" />,
         run: () => navigate({ to: '/workspace/$id', params: { id: g.id } }),
       }))
@@ -297,7 +297,7 @@ export default function CommandPalette({
         ]
       : [
           { heading: 'Actions', items: refine(nav, nav.length) },
-          { heading: 'Recent workspaces', items: refine(wsBase, 4) },
+          { heading: 'Recent spaces', items: refine(wsBase, 4) },
         ]
 
     const groups = built.filter((g) => g.items.length > 0)

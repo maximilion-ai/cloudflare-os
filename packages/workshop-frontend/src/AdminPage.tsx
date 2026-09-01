@@ -401,7 +401,7 @@ export default function AdminPage() {
         onValueChange={setActiveTab}
         tabs={[
           { value: 'general', label: 'General' },
-          { value: 'gatekeepers', label: 'Gatekeepers' },
+          { value: 'gatekeepers', label: 'Connections' },
           { value: 'formats', label: 'Formats' },
           { value: 'access', label: 'Access' },
         ]}
@@ -614,7 +614,7 @@ export default function AdminPage() {
             value={bannerTextDraft}
             onValueChange={setBannerTextDraft}
             rows={1}
-            placeholder={'e.g. \uD83C\uDF89 New: blueprints now support imports \u2014 [learn more](https://example.com).'}
+            placeholder={'e.g. \uD83C\uDF89 New: templates now support imports \u2014 [learn more](https://example.com).'}
             maxLength={MAX_ANNOUNCEMENT_LENGTH}
             error={
               bannerTextDraft.length > MAX_ANNOUNCEMENT_LENGTH
@@ -793,17 +793,17 @@ export default function AdminPage() {
       {/* Gatekeeper resources */}
       {activeTab === 'gatekeepers' && (
         <div className="bg-kumo-elevated border border-kumo-line rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-kumo-strong mb-1">Gatekeepers</h2>
+          <h2 className="text-lg font-semibold text-kumo-strong mb-1">Connections</h2>
           <p className="text-sm text-kumo-subtle mb-5">
             Turn connectors and resource types on or off for each service. Auto-provisioned
-            gatekeepers (like the Context Library) have three modes &mdash; disabled, optional, or
-            enabled for everyone. Changes are soft: they don&rsquo;t revoke access a gadget already
+            connections (like the Context Library) have three modes &mdash; disabled, optional, or
+            enabled for everyone. Changes are soft: they don&rsquo;t revoke access an app already
             holds.
           </p>
 
           {resourceVendors.length === 0 && (
             <p className="text-sm text-kumo-subtle">
-              No configurable gatekeepers are installed on this deployment.
+              No configurable connections are installed on this deployment.
             </p>
           )}
 
