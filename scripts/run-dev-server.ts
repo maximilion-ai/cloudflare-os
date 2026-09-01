@@ -6,6 +6,7 @@
 // Flags:
 //   --use-workers-ai-binding   Include the Workers AI binding in
 //                               workshop-backend (requires Cloudflare login).
+//   --core-only                Skip gatekeeper workers and their UI watchers.
 //   --port PORT                 Listen on PORT instead of 8787. Overrides VITE_BACKEND_HOST.
 //
 // Env:
@@ -62,6 +63,7 @@ function loadDevVars(): void {
 loadDevVars();
 
 const useWorkersAi = process.argv.includes("--use-workers-ai-binding");
+const coreOnly = process.argv.includes("--core-only");
 
 // In `run-local` mode the backend serves the pre-built frontend bundle as static assets (there is no
 // Vite dev server). In normal dev mode we leave assets unconfigured so the frontend is served by
@@ -98,7 +100,7 @@ function findGatekeepers(parentDir: string): Gatekeeper[] {
   }
 }
 
-const gatekeepers = findGatekeepers(PACKAGES_DIR);
+const gatekeepers = coreOnly ? [] : findGatekeepers(PACKAGES_DIR);
 
 // The Context Library (packages/gatekeeper-context) is discovered by findGatekeepers and bound
 // like any other gatekeeper (GATEKEEPER_CONTEXT -> GatekeeperVendor). Its describe() reports
@@ -270,10 +272,12 @@ try {
       [join(WORKSHOP_BACKEND_DIR, "scripts", "build-format-blueprints.mjs")],
       WORKSHOP_BACKEND_DIR,
     ),
-    runBuild("configurator UIs",
-        ...pnpmCommand(["exec", "vp", "run", "-r", "--cache", "build:configurator", "--dev"]), ROOT),
-    runBuild("gatekeeper app UIs",
-        ...pnpmCommand(["exec", "vp", "run", "-r", "--cache", "build:app:dev"]), ROOT),
+    ...coreOnly ? [] : [
+      runBuild("configurator UIs",
+          ...pnpmCommand(["exec", "vp", "run", "-r", "--cache", "build:configurator", "--dev"]), ROOT),
+      runBuild("gatekeeper app UIs",
+          ...pnpmCommand(["exec", "vp", "run", "-r", "--cache", "build:app:dev"]), ROOT),
+    ],
   ]);
 } catch (err) {
   // The SIGTERM handler killing the builds also lands here, as the rejection of whichever build
